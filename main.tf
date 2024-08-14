@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "app_instance" {
-  ami           = "ami-0fda60cefceeaa4d3"  # AMI do Amazon Linux 2 (verifique se esta AMI está disponível na sua região)
+  ami           = "ami-0ff591da048329e00"  # AMI do Amazon Linux 2 (verifique se esta AMI está disponível na sua região)
   instance_type = "t2.micro"               # Tipo de instância (t2.micro está dentro do free tier)
 
     user_data = <<-EOF
