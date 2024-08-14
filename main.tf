@@ -5,6 +5,8 @@ provider "aws" {
 resource "aws_instance" "app_instance" {
   ami           = "ami-0ff591da048329e00"  # AMI do Amazon Linux 2 (verifique se esta AMI está disponível na sua região)
   instance_type = "t2.micro"               # Tipo de instância (t2.micro está dentro do free tier)
+  subnet_id     = aws_subnet.public.id
+  vpc_security_group_ids = [aws_security_group.allow_ssh_http.id]
 
     user_data = <<-EOF
               #!/bin/bash
@@ -28,5 +30,5 @@ resource "aws_instance" "app_instance" {
 }
 
 output "instance_public_ip" {
-  value = aws_instance.app_instance
+  value = aws_instance.app_instance.public_ip
 }
