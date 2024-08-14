@@ -1,0 +1,6 @@
+ID_Venda,Produto,Quantidade,Preco_Unitario,Data_Venda
+1,Notebook,2,2500.0,2024-08-01
+2,Smartphone,1,1200.0,2024-08-02
+3,Tablet,3,900.0,2024-08-03
+4,Monitor,1,850.0,2024-08-04
+5,Impressora,4,650.0,2024-08-05
