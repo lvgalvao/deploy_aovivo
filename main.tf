@@ -14,7 +14,7 @@ resource "aws_instance" "app_instance" {
               sudo systemctl enable docker
 
               # Clonar o repositório do GitHub
-              git clone https://github.com/lvgalvao/terraform-streamlit.git /app
+              git clone https://github.com/lvgalvao/deploy_aovivo.git /app
 
               # Construir e executar o contêiner Docker
               cd /app
