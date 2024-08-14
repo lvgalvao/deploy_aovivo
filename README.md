@@ -142,7 +142,7 @@ Terraform é uma ferramenta de IaC (Infraestrutura como Código) que permite con
                 # Construir e executar o contêiner Docker
                 cd /app
                 sudo docker build -t streamlit-app .
-                sudo docker run -d -p 80:80 streamlit-app
+                sudo docker run -d -p 80:80 --user root streamlit-app
                 EOF
 
     tags = {
