@@ -80,31 +80,32 @@ Docker é uma plataforma que permite criar, distribuir e rodar aplicações de f
 
 1. Crie um `Dockerfile` com o seguinte conteúdo:
    ```Dockerfile
-   FROM python:3.10-slim
-   WORKDIR /app
-   COPY requirements.txt .
-   RUN pip install --no-cache-dir -r requirements.txt
-   COPY . .
-   EXPOSE 8501
-   CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    # Use a imagem base do Python
+    FROM python:3.9-slim
+
+    # Instale as dependências
+    RUN pip install streamlit pandas pyarrow
+
+    COPY ./app.py /app/app.py
+
+    WORKDIR /app
+
+    # Define o comando para rodar a aplicação na porta 80
+    ENTRYPOINT ["streamlit", "run"]
+    CMD ["app.py"]
    ```
 
-2. Crie um `requirements.txt` com:
-   ```txt
-   streamlit
-   ```
-
-3. Construa a imagem Docker:
+2. Construa a imagem Docker:
    ```bash
    docker build -t primeiro_deploy .
    ```
 
-4. Rode o contêiner:
+3. Rode o contêiner:
    ```bash
    docker run -p 8501:8501 primeiro_deploy
    ```
 
-5. Acesse a aplicação em `http://localhost:8501`.
+4. Acesse a aplicação em `http://localhost:8501`.
 
 ## **5. Introdução à Cloud, AWS e Terraform**
 
@@ -120,22 +121,38 @@ Terraform é uma ferramenta de IaC (Infraestrutura como Código) que permite con
 
 1. Crie um arquivo `main.tf`:
    ```hcl
-   provider "aws" {
-     region = "us-west-1"
-   }
+    provider "aws" {
+    region = "us-west-1"  # Substitua pela região que você preferir
+    }
 
-   resource "aws_instance" "app_instance" {
-     ami           = "ami-0fda60cefceeaa4d3"
-     instance_type = "t2.micro"
-     user_data = <<-EOF
-                 #!/bin/bash
-                 yum update -y
-                 yum install -y docker
-                 service docker start
-                 usermod -aG docker ec2-user
-                 docker run -d -p 8501:8501 streamlit/hello-world
-                 EOF
-   }
+    resource "aws_instance" "app_instance" {
+    ami           = "ami-0ff591da048329e00"  # AMI do Amazon Linux 2 (verifique se esta AMI está disponível na sua região)
+    instance_type = "t2.micro"               # Tipo de instância (t2.micro está dentro do free tier)
+
+        user_data = <<-EOF
+                #!/bin/bash
+                sudo apt-get update
+                sudo apt-get install -y docker.io git
+                sudo systemctl start docker
+                sudo systemctl enable docker
+
+                # Clonar o repositório do GitHub
+                git clone https://github.com/lvgalvao/deploy_aovivo.git /app
+
+                # Construir e executar o contêiner Docker
+                cd /app
+                sudo docker build -t streamlit-app .
+                sudo docker run -d -p 80:80 streamlit-app
+                EOF
+
+    tags = {
+        Name = "streamlit-app"
+    }
+    }
+
+    output "instance_public_ip" {
+    value = aws_instance.app_instance
+    }
    ```
 
 2. Inicialize e aplique a configuração:
