@@ -1,188 +1,151 @@
-# **Workshop: Nosso Primeiro Deploy**
+# **Workshop: Primeiro Deploy com Streamlit**
 
-Este repositório contém o código e as instruções para o workshop "Nosso Primeiro Deploy", onde aprenderemos a configurar um ambiente de desenvolvimento, versionar o código com Git e fazer o deploy de uma aplicação simples usando o Streamlit.
+Este repositório contém o código e as instruções para o workshop "Primeiro Deploy com Streamlit", onde você aprenderá a configurar um ambiente de desenvolvimento, versionar código com Git, e fazer o deploy de uma aplicação simples usando Streamlit.
 
-## **1. Criando Nossa Pasta de Trabalho**
+## **1. Configurando o Projeto**
 
-### Passo 1: Criar a pasta do projeto
-Primeiro, vamos criar a pasta onde todo o trabalho será realizado e entrar nela:
+### Criar a Pasta do Projeto
 
-```bash
-mkdir meu_primeiro_deploy
-cd meu_primeiro_deploy
-```
+1. Crie a pasta do projeto e entre nela:
+   ```bash
+   mkdir primeiro_deploy
+   cd primeiro_deploy
+   ```
 
-### Passo 2: Inicializar um projeto Python
-Agora, vamos criar um ambiente virtual Python para isolar nossas dependências e ativá-lo:
+2. Inicialize um ambiente virtual Python e ative-o:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate   # Linux/Mac
+   venv\Scripts\activate      # Windows
+   ```
 
-```bash
-python -m venv venv
-source venv/bin/activate   # Para Linux/Mac
-venv\Scripts\activate      # Para Windows
-```
+3. Instale o Streamlit e crie o arquivo principal do projeto:
+   ```bash
+   pip install streamlit
+   touch app.py
+   ```
 
-### Passo 3: Criar um projeto Streamlit
-Instale o Streamlit e crie o arquivo principal do projeto:
+## **2. Criando a Aplicação**
 
-```bash
-pip install streamlit
-touch app.py
-```
+1. No arquivo `app.py`, adicione o seguinte código:
+   ```python
+   import streamlit as st
 
-## **2. Entendendo o Projeto**
+   st.title("Hello, World!")
+   st.write("Bem-vindo ao primeiro deploy com Streamlit!")
+   ```
 
-### O que queremos fazer nesse projeto?
-O objetivo deste projeto é criar uma aplicação simples em Python usando o Streamlit. A aplicação permitirá que os usuários interajam com um formulário e vejam os resultados em tempo real.
+2. Execute a aplicação:
+   ```bash
+   streamlit run app.py
+   ```
 
-### O que são estados no contexto de controle de versão?
-No Git, o "estado" refere-se ao status atual dos arquivos no repositório. À medida que fazemos alterações no código, é crucial registrar essas mudanças através de commits, garantindo que cada passo no desenvolvimento seja documentado. Isso nos permite acompanhar a evolução do projeto, reverter para versões anteriores se necessário, e colaborar de forma eficaz com outros desenvolvedores.
+## **3. Versionando o Código com Git**
 
-## **3. Comandos Básicos do Terminal**
+1. Inicialize o repositório Git:
+   ```bash
+   git init
+   git add .
+   git commit -m "Setup inicial do projeto"
+   ```
 
-### Passo 4: Navegando pelo terminal
-Para gerenciar o projeto, usaremos alguns comandos básicos do terminal:
+2. Configure o Git (nome de usuário e email):
+   ```bash
+   git config --global user.name "Seu Nome"
+   git config --global user.email "seuemail@example.com"
+   ```
 
-```bash
-cd caminho/para/sua/pasta   # Mudar de diretório
-ls                          # Listar arquivos no diretório
-pwd                         # Mostrar o caminho completo do diretório atual
-```
+3. Publique o código no GitHub:
+   - Crie um repositório no GitHub.
+   - Conecte o repositório local ao GitHub:
+     ```bash
+     git remote add origin https://github.com/seuusuario/primeiro_deploy.git
+     git branch -M main
+     git push -u origin main
+     ```
 
-## **4. Comandos Básicos do Git**
+## **4. Introdução ao Docker**
 
-### Passo 5: Iniciando o repositório Git
-Dentro da pasta do projeto, inicialize um repositório Git para começar a versionar o código:
+### O que é Docker?
 
-```bash
-git init
-git status
-```
+Docker é uma plataforma que permite criar, distribuir e rodar aplicações de forma consistente em qualquer ambiente, usando contêineres.
 
-### Passo 6: Adicionando arquivos ao Git
-Adicione o arquivo `app.py` ao controle de versão para começar a rastrear suas mudanças:
+### Por que usar Docker?
 
-```bash
-git add app.py
-git status
-```
+- **Portabilidade:** Funciona em qualquer lugar que tenha Docker instalado.
+- **Isolamento:** Mantém sua aplicação e dependências separadas de outras.
+- **Facilidade de Deploy:** Simplifica o processo de deploy e gerenciamento.
 
-### Passo 7: Fazendo o primeiro commit
-Faça seu primeiro commit para registrar o estado inicial do projeto:
+### Configurando Docker para o Projeto
 
-```bash
-git commit -m "Primeiro commit - setup inicial do projeto"
-```
+1. Crie um `Dockerfile` com o seguinte conteúdo:
+   ```Dockerfile
+   FROM python:3.10-slim
+   WORKDIR /app
+   COPY requirements.txt .
+   RUN pip install --no-cache-dir -r requirements.txt
+   COPY . .
+   EXPOSE 8501
+   CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+   ```
 
-## **5. Configurações Globais do Git**
+2. Crie um `requirements.txt` com:
+   ```txt
+   streamlit
+   ```
 
-### Passo 8: Configurar nome de usuário e email no Git
-Configure seu nome de usuário e email para que seus commits possam ser identificados corretamente:
+3. Construa a imagem Docker:
+   ```bash
+   docker build -t primeiro_deploy .
+   ```
 
-```bash
-git config --global user.name "Seu Nome"
-git config --global user.email "seuemail@example.com"
-```
+4. Rode o contêiner:
+   ```bash
+   docker run -p 8501:8501 primeiro_deploy
+   ```
 
-### Passo 9: Verificando o histórico de commits
-Veja o histórico de commits para acompanhar as mudanças realizadas no projeto:
+5. Acesse a aplicação em `http://localhost:8501`.
 
-```bash
-git log
-```
+## **5. Introdução à Cloud, AWS e Terraform**
 
-## **6. Modificando Arquivos e Usando Git**
+### O que é Cloud?
 
-### Passo 10: Modificando e adicionando novos arquivos
-Edite o arquivo `app.py` e adicione novos arquivos ao projeto. Depois de fazer essas alterações, verifique o status do repositório:
+Cloud computing oferece serviços de computação (servidores, armazenamento, banco de dados) pela internet. AWS é uma das principais plataformas de cloud.
 
-```bash
-git status
-```
+### Usando AWS com Terraform
 
-### Passo 11: Adicionar um novo arquivo
-Adicione um novo arquivo ao repositório e veja como o Git rastreia essas mudanças:
+Terraform é uma ferramenta de IaC (Infraestrutura como Código) que permite configurar e gerenciar sua infraestrutura na cloud.
 
-```bash
-touch novo_arquivo.txt
-git add novo_arquivo.txt
-git status
-```
+### Configurando uma Instância EC2 na AWS com Terraform
 
-### Passo 12: Usando `git reset` e `git restore`
-Se você decidir que quer desfazer alterações que ainda não foram commitadas, pode usar os seguintes comandos:
+1. Crie um arquivo `main.tf`:
+   ```hcl
+   provider "aws" {
+     region = "us-west-1"
+   }
 
-```bash
-git reset
-git restore --staged novo_arquivo.txt
-```
+   resource "aws_instance" "app_instance" {
+     ami           = "ami-0fda60cefceeaa4d3"
+     instance_type = "t2.micro"
+     user_data = <<-EOF
+                 #!/bin/bash
+                 yum update -y
+                 yum install -y docker
+                 service docker start
+                 usermod -aG docker ec2-user
+                 docker run -d -p 8501:8501 streamlit/hello-world
+                 EOF
+   }
+   ```
 
-Esses comandos permitem que você remova arquivos da área de stage e reverta mudanças que não foram ainda commitadas.
+2. Inicialize e aplique a configuração:
+   ```bash
+   terraform init
+   terraform apply
+   ```
 
-### Passo 13: Resetando para um commit anterior
-Se você precisar reverter o projeto para um estado anterior, pode usar o `git reset` com a hash de um commit específico:
-
-```bash
-git reset --hard <hash_do_commit>
-```
-
-Este comando resetará o estado do repositório para o estado do commit especificado.
-
-## **7. Publicando o Código no GitHub**
-
-### Passo 14: Criando um repositório no GitHub
-1. Acesse o [GitHub](https://github.com/) e faça login na sua conta.
-2. No canto superior direito, clique no ícone "+" e selecione "New repository".
-3. Dê um nome ao seu repositório, como `meu_primeiro_deploy`, e clique em "Create repository".
-
-### Passo 15: Conectando o repositório local ao GitHub
-Volte ao terminal e conecte seu repositório local ao repositório que você acabou de criar no GitHub:
-
-```bash
-git remote add origin https://github.com/seuusuario/meu_primeiro_deploy.git
-git branch -M main
-```
-
-### Passo 16: Fazendo o primeiro push para o GitHub
-Envie seu código para o GitHub com o comando:
-
-```bash
-git push -u origin main
-```
-
-Agora, seu código está publicado no GitHub e você pode acessá-lo de qualquer lugar. 
-
-### Passo 17: Fazendo atualizações e novos pushes
-Quando fizer alterações no código e quiser enviá-las para o GitHub, use os seguintes comandos:
-
-```bash
-git add .
-git commit -m "Descrição das alterações"
-git push origin main
-```
-
-Esses comandos irão adicionar as novas mudanças ao seu repositório no GitHub.
-
-## **8. Rodando a Aplicação Streamlit**
-
-### Passo 18: Escrevendo o código "Hello World"
-No arquivo `app.py`, adicione o seguinte código para criar uma aplicação simples que exibe "Hello, World!" na interface:
-
-```python
-import streamlit as st
-
-st.title("Hello, World!")
-st.write("Bem-vindo ao nosso primeiro deploy com Streamlit!")
-```
-
-### Passo 19: Executando o aplicativo
-Agora que configuramos o ambiente e versionamos o código, podemos rodar a aplicação Streamlit:
-
-```bash
-streamlit run app.py
-```
-
-Isso abrirá uma janela do navegador onde você verá a aplicação em funcionamento, exibindo a mensagem "Hello, World!" junto com uma saudação adicional.
+3. Acesse a aplicação usando o IP público da instância EC2.
 
 ## **Conclusão**
 
-Este README fornece um guia passo a passo para configurar um ambiente de desenvolvimento em Python, usar Git para controlar versões, publicar seu código no GitHub e rodar uma aplicação Streamlit. Com essas ferramentas, você pode começar a desenvolver e implantar aplicações de forma eficiente, garantindo que cada alteração no código seja registrada e segura.
+Este guia fornece os passos essenciais para configurar um ambiente de desenvolvimento, usar Git para controle de versão, rodar uma aplicação com Docker, e fazer o deploy na AWS usando Terraform. Com essas ferramentas, você pode criar, versionar e implantar aplicações de forma eficiente e escalável.
